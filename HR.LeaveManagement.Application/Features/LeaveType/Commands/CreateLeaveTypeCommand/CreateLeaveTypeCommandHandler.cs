@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using HR.LeaveManagement.Application.Exceptions;
 using HR.LeaveManagement.Domain.Interfaces;
 using MediatR;
@@ -9,17 +10,19 @@ public class CreateLeaveTypeCommandHandler : IRequestHandler<CreateLeaveTypeComm
 {
     private readonly ILeaveTypeRepository repository;
     private readonly IMapper mapper;
+    private readonly IValidator<CreateLeaveTypeCommand> validator;
 
-    public CreateLeaveTypeCommandHandler(ILeaveTypeRepository repository, IMapper mapper)
+    public CreateLeaveTypeCommandHandler(ILeaveTypeRepository repository, IMapper mapper, IValidator<CreateLeaveTypeCommand> validator)
     {
         this.repository = repository;
         this.mapper = mapper;
+        this.validator = validator;
     }
 
     public async Task<int> Handle(CreateLeaveTypeCommand request, CancellationToken cancellationToken)
     {
         // Validation
-        var validator = new CreateLeaveTypeCommandValidator(repository);
+        //var validator = new CreateLeaveTypeCommandValidator(repository);
         FluentValidation.Results.ValidationResult validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (validationResult.Errors.Any())

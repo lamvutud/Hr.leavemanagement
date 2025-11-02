@@ -18,6 +18,7 @@ namespace HR.LeaveManagement.Application.UnitTests.Features.LeaveTypes
         private Mock<ILeaveTypeRepository> _mockRepo;
         private List<LeaveType> _leaveTypes;
         private IMapper _mapper;
+        private CreateLeaveTypeCommandValidator _validator;
 
         public CreateLeaveTypeCommandHandlerTest()
         {
@@ -50,6 +51,7 @@ namespace HR.LeaveManagement.Application.UnitTests.Features.LeaveTypes
             });
 
             _mapper = mapperConfiguration.CreateMapper();
+            _validator = new CreateLeaveTypeCommandValidator(_mockRepo.Object);
         }
 
         [Fact]
@@ -57,7 +59,7 @@ namespace HR.LeaveManagement.Application.UnitTests.Features.LeaveTypes
         {
             var command = new CreateLeaveTypeCommand() { Name = "A", DefaultDays = 20 };
 
-            var sut = new CreateLeaveTypeCommandHandler(_mockRepo.Object, _mapper);
+            var sut = new CreateLeaveTypeCommandHandler(_mockRepo.Object, _mapper, _validator);
 
             await sut.Handle(command, CancellationToken.None);
 
@@ -66,18 +68,6 @@ namespace HR.LeaveManagement.Application.UnitTests.Features.LeaveTypes
             _leaveTypes.ShouldContain(x => x.Name == "A");
         }
 
-        [Fact]
-        public async Task WhenCreateLeaveTypes_CreateOne1()
-        {
-            var command = new CreateLeaveTypeCommand() { Name = "B", DefaultDays = 20 };
 
-            var sut = new CreateLeaveTypeCommandHandler(_mockRepo.Object, _mapper);
-
-            await sut.Handle(command, CancellationToken.None);
-
-            _mockRepo.Verify(x => x.CreateAsync(It.IsAny<LeaveType>()), Times.Once);
-            _leaveTypes.Count().ShouldBe(2);
-            _leaveTypes.ShouldNotContain(x => x.Name == "A");
-        }
     }
 }

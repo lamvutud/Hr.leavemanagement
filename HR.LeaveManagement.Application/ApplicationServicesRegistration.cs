@@ -8,12 +8,10 @@ public static class ApplicationServicesRegistration
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        var entryAssembly = Assembly.GetEntryAssembly();
-        var callingAssemnly = Assembly.GetCallingAssembly();
-        var assembly = Assembly.GetExecutingAssembly();
         services
             .AddMediatR(Assembly.GetExecutingAssembly())
-            .AddAutoMapper(Assembly.GetExecutingAssembly());
+            .AddAutoMapper(Assembly.GetExecutingAssembly())
+            .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
         return services;
     }
